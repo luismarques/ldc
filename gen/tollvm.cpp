@@ -257,8 +257,15 @@ LLIntegerType *DtoSize_t() {
   // the type of size_t does not change once set
   static LLIntegerType *t = nullptr;
   if (t == nullptr) {
-    t = (global.params.isLP64) ? LLType::getInt64Ty(gIR->context())
-                               : LLType::getInt32Ty(gIR->context());
+    if (global.params.isLP64) {
+      t = LLType::getInt64Ty(gIR->context());
+    }
+    else if (global.params.targetTriple->isArch16Bit()) {
+      t = LLType::getInt16Ty(gIR->context());
+    }
+    else {
+      t = LLType::getInt32Ty(gIR->context());
+    }
   }
   return t;
 }
